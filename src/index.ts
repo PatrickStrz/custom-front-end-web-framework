@@ -22,3 +22,13 @@ user.on('yooBDJ', () => {
 user.trigger('yooBDJ')
 
 console.log(user.events)
+
+import axios from 'axios'
+
+// const users = axios.post('http://localhost:3000/users', {
+//   name: 'pat',
+//   age: 27
+// })
+const users = axios.get('http://localhost:3000/users')
+
+console.log('users', users)
