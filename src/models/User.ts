@@ -1,4 +1,5 @@
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
+import { Eventing } from './Eventing'
 
 interface UserProps {
   id?: number
@@ -6,11 +7,10 @@ interface UserProps {
   age?: number
 }
 
-type Callback = () => void
-
 export class User {
-  events: { [key: string]: Callback[] } = {}
-  private baseUrl: string = 'http://localhost/3000'
+  private baseUrl: string = 'http://localhost:3000'
+
+  public events: Eventing = new Eventing()
 
   constructor(private data: UserProps) {}
 
@@ -23,24 +23,19 @@ export class User {
     Object.assign(this.data, update)
   }
 
-  on(eventName: Event['type'], callback: Callback): void {
-    const handlers = this.events[eventName] || []
-    handlers.push(callback)
-    this.events[eventName] = handlers
+  async fetch(): Promise<void> {
+    const response = await axios.get(`${this.baseUrl}/users/${this.get('id')}`)
+    this.set(response.data)
   }
 
-  trigger(eventName: string): void {
-    const handlers = this.events[eventName]
-    handlers.forEach(callback => {
-      callback()
-    })
-  }
-
-  fetch(): void {
-    axios
-      .get(`${this.baseUrl}/users/${this.get('id')}`)
-      .then((response: AxiosResponse) => {
-        this.set(response.data)
-      })
+  async save(): Promise<void> {
+    const id = this.get('id')
+    if (id) {
+      const response = await axios.put(`${this.baseUrl}/users/${id}`, this.data)
+      this.set(response.data)
+    } else {
+      const response = await axios.post(`${this.baseUrl}/users/`, this.data)
+      this.set(response.data)
+    }
   }
 }

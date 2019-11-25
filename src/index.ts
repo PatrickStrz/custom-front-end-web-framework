@@ -1,34 +1,28 @@
 import { User } from './models/User'
 
-const user = new User({ name: 'Oat', age: 29 })
-const name = user.get('name')
+void (async () => {
+  const user = new User({ name: 'Oat', age: 29 })
+  const name = user.get('name')
 
-console.log('This Users name is:', name)
+  console.log('This Users name is:', name)
 
-user.set({ name: 'NOTOAT' })
+  user.set({ id: 2 })
 
-user.on('yooSteve', () => {})
+  const eventExample = 'EXAMPLE'
 
-console.log(user.events)
+  user.events.on(eventExample, () => {
+    console.log('triggerd', eventExample)
+  })
 
-user.on('yooSteve', () => {
-  console.log('second juan')
-})
+  user.events.trigger(eventExample)
 
-user.on('yooBDJ', () => {
-  console.log('triggggered BD')
-})
+  user.fetch()
 
-user.trigger('yooBDJ')
+  const user2 = new User({ id: 4, name: 'Putted user 2' })
+  await user2.save()
+  console.log('User3:', user2)
+})()
 
-console.log(user.events)
-
-import axios from 'axios'
-
-// const users = axios.post('http://localhost:3000/users', {
-//   name: 'pat',
-//   age: 27
-// })
-const users = axios.get('http://localhost:3000/users')
-
-console.log('users', users)
+void (() => {
+  console.log('VOID!')
+})()
